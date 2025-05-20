@@ -22,6 +22,8 @@ setup(
         'console_scripts': [
             'my_node = my_package.my_node:main',
             'pose_subscriber = my_package.pose_subscriber:main',
+            'move_turtle = my_package.move_turtle:main',
+            'cuadrado = my_package.cuadrado:main',
         ],
     },
 )
