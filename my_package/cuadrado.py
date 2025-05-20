@@ -12,7 +12,7 @@ class SquareDrawer(Node):
         self.cmd_pub = self.create_publisher(Twist, '/square_turtle/cmd_vel', 10)
         self.pose_sub = self.create_subscription(Pose, '/square_turtle/pose', self.pose_callback, 10)
         self.current_pose = None
-        self.targets = [(7.5, 3.0), (4.5, 3.0), (4.5, 0.0), (7.5, 0.0)]
+        self.targets = [(7.5, 3.0), (4.5, 3.0), (4.5, 0.0), (7.5, 0.0)] # Vertexs del cuadrat
         self.target_index = 0
         self.reached_target = False
 
@@ -26,7 +26,7 @@ class SquareDrawer(Node):
         req = Spawn.Request()
         req.x = 7.5
         req.y = 0.0
-        req.theta = math.pi / 2
+        req.theta = math.pi / 2 # Apuntar a 90 graus
         req.name = 'square_turtle'
 
         future = client.call_async(req)
@@ -45,20 +45,17 @@ class SquareDrawer(Node):
         target_x, target_y = self.targets[self.target_index]
         dx = target_x - self.current_pose.x
         dy = target_y - self.current_pose.y
-        distance = math.hypot(dx, dy)
+        distance = math.hypot(dx, dy) # Hipotenusa per calcular la distancia
 
-        # Umbral para decir que ha llegado al punto
-        if distance < 0.1:
+        if distance < 0.1: # Per controlar que ha arribat al punt
             self.get_logger().info(f'Lado {self.target_index + 1} completado')
             self.target_index += 1
-            self.cmd_pub.publish(Twist())  # parar
+            self.cmd_pub.publish(Twist())  # Pubblica missatge buit per parar
             return
 
-        # Control proporcional simple
-        angle_to_target = math.atan2(dy, dx)
+        angle_to_target = math.atan2(dy, dx) # Control proporcional
         angle_error = angle_to_target - self.current_pose.theta
-        # Normalizar ángulo entre -pi y pi
-        angle_error = math.atan2(math.sin(angle_error), math.cos(angle_error))
+        angle_error = math.atan2(math.sin(angle_error), math.cos(angle_error)) # Normalitzar l'angle
 
         cmd = Twist()
         if abs(angle_error) > 0.1:
